@@ -22,6 +22,12 @@ sh retrieveData.sh
 ### Run code
 
 ```
+Indian Pines
+python main.py --tr_percent 0.10 --dataset IP # without data augmentation
+python main.py --p 0.25 --tr_percent 0.10 --dataset IP # with data augmentation
+python main.py --p 0.5 --tr_percent 0.10 --dataset IP # with data augmentation
+
+University of Pavia
 python main.py --tr_percent 0.10 --dataset PU # without data augmentation
 python main.py --p 0.25 --tr_percent 0.10 --dataset PU # with data augmentation
 python main.py --p 0.5 --tr_percent 0.10 --dataset PU # with data augmentation
