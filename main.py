@@ -18,76 +18,59 @@ import transform
 def load_hyper(args):
 	data, labels, numclass = auxil.loadData(args.dataset, num_components=args.components)
 	pixels, labels = auxil.createImageCubes(data, labels, windowSize=args.spatialsize, removeZeroLabels = True)
-	
 	bands = pixels.shape[-1]; numberofclass = len(np.unique(labels))
-
 	x_train, x_test, y_train, y_test = auxil.split_data(pixels, labels, args.tr_percent)
 	del pixels, labels
-
-	transform_train = transform.RandomErasing(probability = args.p, sh = args.sh, r1 = args.r1, )
-	#transform_train = None
-	
-	
+	if args.p != 0: transform_train = transform.RandomErasing(probability = args.p, sh = args.sh, r1 = args.r1, )
+	else: transform_train = None
 	train_hyper = HyperData((np.transpose(x_train, (0, 3, 1, 2)).astype("float32"),y_train), transform_train)
 	test_hyper  = HyperData((np.transpose(x_test, (0, 3, 1, 2)).astype("float32"),y_test), None)
-
 	kwargs = {'num_workers': 1, 'pin_memory': True}
 	train_loader = torch.utils.data.DataLoader(train_hyper, batch_size=args.tr_bsize, shuffle=True, **kwargs)
 	test_loader  = torch.utils.data.DataLoader(test_hyper, batch_size=args.te_bsize, shuffle=False, **kwargs)
 	return train_loader, test_loader, numberofclass, bands
 
 
-
-
-
-
 def train(trainloader, model, criterion, optimizer, epoch, use_cuda):
-	# switch to train mode
 	model.train()
-	
 	accs   = np.ones((len(trainloader))) * -1000.0
 	losses = np.ones((len(trainloader))) * -1000.0
 	for batch_idx, (inputs, targets) in enumerate(trainloader):
 		if use_cuda:
 			inputs, targets = inputs.cuda(), targets.cuda()
 		inputs, targets = torch.autograd.Variable(inputs), torch.autograd.Variable(targets)
-
 		outputs = model(inputs)
-
 		loss = criterion(outputs, targets)
 		losses[batch_idx] = loss.item()
 		accs[batch_idx] = auxil.accuracy(outputs.data, targets.data)[0].item()
-
-		# compute gradient and do SGD step
 		optimizer.zero_grad()
 		loss.backward()
 		optimizer.step()
-
 	return (np.average(losses), np.average(accs))
 
 
-
 def test(testloader, model, criterion, epoch, use_cuda):
-	global best_acc
-	# switch to evaluate mode
 	model.eval()
-
 	accs   = np.ones((len(testloader))) * -1000.0
 	losses = np.ones((len(testloader))) * -1000.0
 	for batch_idx, (inputs, targets) in enumerate(testloader):
 		if use_cuda:
 			inputs, targets = inputs.cuda(), targets.cuda()
 		inputs, targets = torch.autograd.Variable(inputs, volatile=True), torch.autograd.Variable(targets)
-		# compute output
 		outputs = model(inputs)
-
 		losses[batch_idx] = criterion(outputs, targets).item()
 		accs[batch_idx] = auxil.accuracy(outputs.data, targets.data, topk=(1,))[0].item()
-
 	return (np.average(losses), np.average(accs))
 
 
-
+def predict(testloader, model, criterion, use_cuda):
+	model.eval()
+	predicted = []
+	for batch_idx, (inputs, targets) in enumerate(testloader):
+		if use_cuda: inputs = inputs.cuda()
+		inputs, targets = torch.autograd.Variable(inputs, volatile=True), torch.autograd.Variable(targets)
+		[predicted.append(a) for a in model(inputs).data.cpu().numpy()] 
+	return np.array(predicted)
 
 
 
@@ -164,6 +147,8 @@ def main():
 	optimizer.load_state_dict(checkpoint['optimizer'])
 	test_loss, test_acc = test(testloader, model, criterion, epoch, use_cuda)
 	print("FINAL:      LOSS", test_loss, "ACCURACY", test_acc)
+	classification, confusion, results = auxil.reports(np.argmax(predict(testloader, model, criterion, use_cuda), axis=1), np.array(testloader.dataset.__labels__()), args.dataset)
+	print(args.dataset, results)
 	
 
 if __name__ == '__main__':

@@ -4,6 +4,9 @@ import scipy.io as sio
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report, cohen_kappa_score
+from operator import truediv
+
 
 def shuffle_unison(a, b):
 	assert len(a) == len(b)
@@ -89,3 +92,40 @@ def accuracy(output, target, topk=(1,)):
 		correct_k = correct[:k].view(-1).float().sum(0)
 		res.append(correct_k.mul_(100.0 / batch_size))
 	return res
+
+
+def AA_andEachClassAccuracy(confusion_matrix):
+    counter = confusion_matrix.shape[0]
+    list_diag = np.diag(confusion_matrix)
+    list_raw_sum = np.sum(confusion_matrix, axis=1)
+    each_acc = np.nan_to_num(truediv(list_diag, list_raw_sum))
+    average_acc = np.mean(each_acc)
+    return each_acc, average_acc
+
+
+def reports(y_pred, y_test, name):
+	if name == 'IP':
+		target_names = ['Alfalfa', 'Corn-notill', 'Corn-mintill', 'Corn'
+						,'Grass-pasture', 'Grass-trees', 'Grass-pasture-mowed', 
+						'Hay-windrowed', 'Oats', 'Soybean-notill', 'Soybean-mintill',
+						'Soybean-clean', 'Wheat', 'Woods', 'Buildings-Grass-Trees-Drives',
+						'Stone-Steel-Towers']
+	elif name == 'SA':
+		target_names = ['Brocoli_green_weeds_1','Brocoli_green_weeds_2','Fallow','Fallow_rough_plow','Fallow_smooth',
+						'Stubble','Celery','Grapes_untrained','Soil_vinyard_develop','Corn_senesced_green_weeds',
+						'Lettuce_romaine_4wk','Lettuce_romaine_5wk','Lettuce_romaine_6wk','Lettuce_romaine_7wk',
+						'Vinyard_untrained','Vinyard_vertical_trellis']
+	elif name == 'PU':
+		target_names = ['Asphalt','Meadows','Gravel','Trees', 'Painted metal sheets','Bare Soil','Bitumen',
+						'Self-Blocking Bricks','Shadows']
+
+	else:
+		target_names = [str(a) for a in range(15)]
+
+	classification = classification_report(y_test, y_pred, target_names=target_names)
+	oa = accuracy_score(y_test, y_pred)
+	confusion = confusion_matrix(y_test, y_pred)
+	each_acc, aa = AA_andEachClassAccuracy(confusion)
+	kappa = cohen_kappa_score(y_test, y_pred)
+
+	return classification, confusion, list(np.round(np.array([oa, aa, kappa] + list(each_acc)) * 100, 2))

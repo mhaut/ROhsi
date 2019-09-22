@@ -21,3 +21,6 @@ class HyperData(Dataset):
 
 	def __len__(self):
 		return len(self.labels)
+
+	def __labels__(self):
+		return self.labels
