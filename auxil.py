@@ -35,6 +35,9 @@ def loadData(name, num_components=None):
 	elif name == 'PU':
 		data = sio.loadmat(os.path.join(data_path, 'paviaU.mat'))['paviaU']
 		labels = sio.loadmat(os.path.join(data_path, 'paviaU_gt.mat'))['paviaU_gt']
+	elif name == 'KSC':
+		data = sio.loadmat(os.path.join(data_path, 'KSC.mat'))['KSC']
+		labels = sio.loadmat(os.path.join(data_path, 'KSC_gt.mat'))['KSC_gt']
 	else:
 		print("NO DATASET")
 		exit()
@@ -118,7 +121,8 @@ def reports(y_pred, y_test, name):
 	elif name == 'PU':
 		target_names = ['Asphalt','Meadows','Gravel','Trees', 'Painted metal sheets','Bare Soil','Bitumen',
 						'Self-Blocking Bricks','Shadows']
-
+	elif name == 'KSC':
+		target_names = [str(a) for a in range(13)]
 	else:
 		target_names = [str(a) for a in range(15)]
 

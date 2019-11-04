@@ -20,3 +20,7 @@ wget 'http://www.ehu.eus/ccwintco/uploads/c/c4/Indian_pines_gt.mat' -O data/indi
 echo 'Retrieving University of Pavia...'
 wget 'http://www.ehu.eus/ccwintco/uploads/e/ee/PaviaU.mat' -O data/PaviaU.mat
 wget 'http://www.ehu.eus/ccwintco/uploads/5/50/PaviaU_gt.mat' -O data/PaviaU_gt.mat
+
+echo 'Retrieving Kennedy Space Center...'
+wget 'http://www.ehu.es/ccwintco/uploads/2/26/KSC.mat' -O data/KSC.mat
+wget 'http://www.ehu.es/ccwintco/uploads/a/a6/KSC_gt.mat' -O data/KSC_gt.mat
