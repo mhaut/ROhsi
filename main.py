@@ -109,7 +109,6 @@ def main():
 	if use_cuda: torch.backends.cudnn.benchmark = True
 
 	model = models.SimpleCNN(bands, args.spatialsize, num_classes)
-	model = torch.nn.DataParallel(model)
 	if use_cuda: model = model.cuda()
 
 	criterion = torch.nn.CrossEntropyLoss()
@@ -126,7 +125,7 @@ def main():
 		train_loss, train_acc = train(trainloader, model, criterion, optimizer, epoch, use_cuda)
 		test_loss, test_acc = test(testloader, model, criterion, epoch, use_cuda)
 
-		print("EPOCH", epoch, "TRAIN LOSS", test_loss, "TRAIN ACCURACY", test_acc, end=',')
+		print("EPOCH", epoch, "TRAIN LOSS", train_loss, "TRAIN ACCURACY", train_acc, end=',')
 		print("LOSS", test_loss, "ACCURACY", test_acc)
 		# save model
 		if test_acc > best_acc:
