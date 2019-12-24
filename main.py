@@ -25,7 +25,7 @@ def load_hyper(args):
 	else: transform_train = None
 	train_hyper = HyperData((np.transpose(x_train, (0, 3, 1, 2)).astype("float32"),y_train), transform_train)
 	test_hyper  = HyperData((np.transpose(x_test, (0, 3, 1, 2)).astype("float32"),y_test), None)
-	kwargs = {'num_workers': 1, 'pin_memory': True}
+	kwargs = {'num_workers': 0, 'pin_memory': True}
 	train_loader = torch.utils.data.DataLoader(train_hyper, batch_size=args.tr_bsize, shuffle=True, **kwargs)
 	test_loader  = torch.utils.data.DataLoader(test_hyper, batch_size=args.te_bsize, shuffle=False, **kwargs)
 	return train_loader, test_loader, numberofclass, bands
@@ -96,7 +96,6 @@ def main():
 	parser.add_argument('--sh', default=0.3, type=float, help='max erasing area')
 	parser.add_argument('--r1', default=0.2, type=float, help='aspect of erasing area')
 	
-	# ALERT: cambiar esto
 	parser.add_argument("--verbose", action='store_true', help="Verbose? Default NO")
 
 	args = parser.parse_args()
@@ -125,8 +124,8 @@ def main():
 		train_loss, train_acc = train(trainloader, model, criterion, optimizer, epoch, use_cuda)
 		test_loss, test_acc = test(testloader, model, criterion, epoch, use_cuda)
 
-		print("EPOCH", epoch, "TRAIN LOSS", train_loss, "TRAIN ACCURACY", train_acc, end=',')
-		print("LOSS", test_loss, "ACCURACY", test_acc)
+		if args.verbose: print("EPOCH", epoch, "TRAIN LOSS", train_loss, "TRAIN ACCURACY", train_acc, end=',')
+		if args.verbose: print("LOSS", test_loss, "ACCURACY", test_acc)
 		# save model
 		if test_acc > best_acc:
 			state = {
@@ -145,7 +144,7 @@ def main():
 	model.load_state_dict(checkpoint['state_dict'])
 	optimizer.load_state_dict(checkpoint['optimizer'])
 	test_loss, test_acc = test(testloader, model, criterion, epoch, use_cuda)
-	print("FINAL:      LOSS", test_loss, "ACCURACY", test_acc)
+	if args.verbose: print("FINAL:      LOSS", test_loss, "ACCURACY", test_acc)
 	classification, confusion, results = auxil.reports(np.argmax(predict(testloader, model, criterion, use_cuda), axis=1), np.array(testloader.dataset.__labels__()), args.dataset)
 	print(args.dataset, results)
 	
