@@ -33,8 +33,8 @@ def loadData(name, num_components=None):
 		data = sio.loadmat(os.path.join(data_path, 'salinas_corrected.mat'))['salinas_corrected']
 		labels = sio.loadmat(os.path.join(data_path, 'salinas_gt.mat'))['salinas_gt']
 	elif name == 'PU':
-		data = sio.loadmat(os.path.join(data_path, 'paviaU.mat'))['paviaU']
-		labels = sio.loadmat(os.path.join(data_path, 'paviaU_gt.mat'))['paviaU_gt']
+		data = sio.loadmat(os.path.join(data_path, 'PaviaU.mat'))['paviaU']
+		labels = sio.loadmat(os.path.join(data_path, 'PaviaU_gt.mat'))['paviaU_gt']
 	elif name == 'KSC':
 		data = sio.loadmat(os.path.join(data_path, 'KSC.mat'))['KSC']
 		labels = sio.loadmat(os.path.join(data_path, 'KSC_gt.mat'))['KSC_gt']

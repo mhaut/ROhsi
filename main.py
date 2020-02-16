@@ -38,6 +38,7 @@ def train(trainloader, model, criterion, optimizer, epoch, use_cuda):
 	for batch_idx, (inputs, targets) in enumerate(trainloader):
 		if use_cuda:
 			inputs, targets = inputs.cuda(), targets.cuda()
+        
 		inputs, targets = torch.autograd.Variable(inputs), torch.autograd.Variable(targets)
 		outputs = model(inputs)
 		loss = criterion(outputs, targets)
@@ -100,7 +101,7 @@ def main():
 
 	args = parser.parse_args()
 	state = {k: v for k, v in args._get_kwargs()}
-
+	print(state)
 	trainloader, testloader, num_classes, bands = load_hyper(args)
 
 	# Use CUDA
@@ -119,7 +120,7 @@ def main():
 	best_acc = -1
 	for epoch in range(args.epochs):
 		#adjust_learning_rate(optimizer, epoch)
-		if args.verbose: print('\nEpoch: [%d | %d] LR: %f' % (epoch + 1, args.epochs, state['lr']))
+		if args.verbose: print('\nEpoch: [%d | %d] LR: %f' % (epoch + 1, args.epochs, state['learning_rate']))
 
 		train_loss, train_acc = train(trainloader, model, criterion, optimizer, epoch, use_cuda)
 		test_loss, test_acc = test(testloader, model, criterion, epoch, use_cuda)
@@ -128,14 +129,14 @@ def main():
 		if args.verbose: print("LOSS", test_loss, "ACCURACY", test_acc)
 		# save model
 		if test_acc > best_acc:
-			state = {
+			state_save = {
 					'epoch': epoch + 1,
 					'state_dict': model.state_dict(),
 					'acc': test_acc,
 					'best_acc': best_acc,
 					'optimizer' : optimizer.state_dict(),
 			}
-			torch.save(state, "best_model"+str(args.p)+".pth.tar")
+			torch.save(state_save, "best_model"+str(args.p)+".pth.tar")
 			best_acc = test_acc
 
 	checkpoint = torch.load("best_model"+str(args.p)+".pth.tar")
