@@ -13,10 +13,14 @@ Accepted for publication, 2019.
 
 
 ## Example of use
-### Download datasets
-
 ```
-sh retrieveData.sh
+# Without datasets
+git clone https://github.com/mhaut/ROhsi
+
+# With datasets
+git clone --recursive https://github.com/mhaut/ROhsi
+cd HSI-datasets
+python join_dsets.py
 ```
 
 ### Run code
