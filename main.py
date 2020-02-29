@@ -72,23 +72,22 @@ def predict(testloader, model, criterion, use_cuda):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dataset', default='IP', type=str, help='the path to your dataset')
-    parser.add_argument('--lr', type=float, default=0.001, help='learning rate of adam optimizer')
-    parser.add_argument('--epochs', default=600, type=int, help='number of total epochs')
-    parser.add_argument('--batch_size', default=100, type=int, help='batch size')
-    parser.add_argument('--components', default=1, type=int, help='dimensionality reduction')
-    parser.add_argument('--spatialsize', default=23, type=int, help='windows size')
+    parser.add_argument('--dataset', default='IP', type=str, help='Dataset')
+    parser.add_argument('--lr', type=float, default=0.001, help='Learning rate')
+    parser.add_argument('--epochs', default=600, type=int, help='Number of total epochs')
+    parser.add_argument('--components', default=1, type=int, help='Dimensionality reduction')
+    parser.add_argument('--spatialsize', default=23, type=int, help='Patch size')
     parser.add_argument('--tr_percent', default=0.10, type=float, metavar='N', 
-                        help='train set size')
+                        help='Train set size')
     parser.add_argument('--tr_bsize', default=100, type=int, metavar='N',
-                        help='train batchsize')
+                        help='Train batch size')
     parser.add_argument('--te_bsize', default=5000, type=int, metavar='N',
-                        help='test batchsize')
+                        help='Test batch size')
     parser.add_argument("--verbose", action='store_true', help="Verbose? Default NO")
 
-    parser.add_argument('--p', default=0, type=float, help='Probability')
-    parser.add_argument('--sh', default=0.3, type=float, help='max occlusion area')
-    parser.add_argument('--r1', default=0.2, type=float, help='aspect of occlusion area')
+    parser.add_argument('--p', default=0, type=float, help='Occlusion probability')
+    parser.add_argument('--sh', default=0.3, type=float, help='Max occlusion area')
+    parser.add_argument('--r1', default=0.2, type=float, help='Aspect of occlusion area')
 
     args = parser.parse_args()
     state = {k: v for k, v in args._get_kwargs()}
