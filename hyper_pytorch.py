@@ -9,7 +9,8 @@ class HyperData(Dataset):
         self.data = dataset[0].astype(np.float32)
         self.transformer = transfor
         self.labels = []
-        for n in dataset[1]: self.labels += [int(n)]
+        for n in dataset[1]:
+            self.labels += [int(n)]
 
     def __getitem__(self, index):
         if self.transformer == None:
@@ -24,3 +25,5 @@ class HyperData(Dataset):
 
     def __labels__(self):
         return self.labels
+
+
