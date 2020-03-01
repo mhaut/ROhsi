@@ -1,3 +1,4 @@
+import cv2
 import numpy as np
 from operator import truediv
 import os
@@ -9,12 +10,14 @@ from sklearn.metrics import confusion_matrix, accuracy_score, classification_rep
 
 
 def shuffle_unison(a, b):
-	assert len(a) == len(b)
-	p = numpy.random.permutation(len(a))
-	return a[p], b[p]
+    assert len(a) == len(b)
+    p = numpy.random.permutation(len(a))
+    return a[p], b[p]
+
 
 def split_data(pixels, labels, percent):
-    return train_test_split(pixels, labels, test_size=(1-percent), stratify=labels, random_state=42)
+    X_test, X_train, y_test, y_train = train_test_split(pixels, labels, test_size=percent, stratify=labels)
+    return X_train, X_test, y_train, y_test
 
 
 def loadData(name, num_components=None):
@@ -53,6 +56,7 @@ def padWithZeros(X, margin=2):
     y_offset = margin
     newX[x_offset:X.shape[0] + x_offset, y_offset:X.shape[1] + y_offset, :] = X
     return newX
+
 
 def createImageCubes(X, y, windowSize=5, removeZeroLabels = True):
     margin = int((windowSize - 1) / 2)
