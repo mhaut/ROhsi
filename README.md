@@ -5,7 +5,7 @@ J. M. Haut, M. E. Paoletti, J. Plaza, A. Plaza and J. Li.
 Hyperspectral Image Classification Using Random Occlusion Data Augmentation.
 IEEE Geoscience and Remote Sensing Letters.
 DOI: 10.1109/LGRS.2019.2909495 
-Accepted for publication, 2019.
+vol. 16, no. 11, pp. 1751-1755, November 2019.
 ```
 
 ![ROhsi](https://github.com/mhaut/ROhsi/blob/master/images/rohsi.png)
